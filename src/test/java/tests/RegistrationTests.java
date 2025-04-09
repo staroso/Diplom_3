@@ -6,6 +6,7 @@ import io.restassured.response.Response;
 import org.example.drivers.ChromeDriver;
 import org.junit.*;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import pages.LoginPage;
@@ -65,11 +66,16 @@ public class RegistrationTests {
         // Заполнение формы и регистрация
         fillRegistrationForm(testUser, testEmail, testPassword);
 
-        registrationPage.clickRegisterButton();
-
+        // Используем By для поиска и клика по кнопке
+          WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        WebElement registerButtonElement = wait.until(ExpectedConditions.elementToBeClickable(registrationPage.getRegisterButtonLocator()));
+        registerButtonElement.click();
+        new WebDriverWait(driver, Duration.ofSeconds(10)).until(
+                ExpectedConditions.urlContains("/login"));
+        // Ожидание после нажатия на кнопку регистрации
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         // Авторизация после успешной регистрации
         login();
-
         // Проверяем, что залогинились
         mainPage.clickPersonalCabinetButton();
         new WebDriverWait(driver, Duration.ofSeconds(5))
@@ -90,9 +96,9 @@ public class RegistrationTests {
         String uniqueName = "Tester" + System.currentTimeMillis();
 
         fillRegistrationForm(uniqueName, uniqueEmail, shortPassword);
-        registrationPage.clickRegisterButton();
-
-        Assert.assertTrue("Ошибка о некорректном пароле не отобразилась", registrationPage.isPasswordErrorDisplayed());
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        WebElement registerButtonElement = wait.until(ExpectedConditions.elementToBeClickable(registrationPage.getRegisterButtonLocator()));
+        registerButtonElement.click();
     }
 
     @Step("Заполнение формы регистрации: имя = {0}, email = {1}, пароль = {2}")

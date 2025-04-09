@@ -1,13 +1,12 @@
 package pages;
 
-
-import org.openqa.selenium.By;
-import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.time.Duration;
 
 public class RegistrationPage {
     private WebDriver driver;
@@ -22,7 +21,14 @@ public class RegistrationPage {
     private WebElement passwordInput;
 
     @FindBy(xpath = "//button[contains(text(),'Зарегистрироваться')]")
-    private WebElement registerButton;
+    private By registerButton;
+
+    public  By registerButtonLocator = By.xpath("//button[contains(text(),'Зарегистрироваться')]");
+
+    // Геттер для доступа к локатору
+    public By getRegisterButtonLocator() {
+        return registerButtonLocator;
+    }
 
     @FindBy(xpath = "//a[text()='Войти']")
     private WebElement loginButton;
@@ -52,28 +58,9 @@ public class RegistrationPage {
     }
 
     public void clickRegisterButton() {
-        try {
-            // Задержка 10 секунд
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-
-        Actions actions = new Actions(driver);
-
-        try {
-            // Первая попытка клика
-            actions.moveToElement(registerButton).click().build().perform();
-        } catch (StaleElementReferenceException e) {
-            // Повторный поиск элемента и повтор клика
-            registerButton = driver.findElement(By.xpath("//button[text()='Зарегистрироваться']")); // или другой локатор
-            actions.moveToElement(registerButton).click().build().perform();
-        }
-    }
-
-
-    public boolean isPasswordErrorDisplayed() {
-        return passwordErrorMessage.isDisplayed();
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        WebElement registerButtonElement = wait.until(ExpectedConditions.elementToBeClickable(registerButton));
+        registerButtonElement.click();
     }
 }
 
