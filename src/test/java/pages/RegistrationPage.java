@@ -1,6 +1,8 @@
 package pages;
 
 
+import org.openqa.selenium.By;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -49,16 +51,26 @@ public class RegistrationPage {
         loginButton.click();
     }
 
-  public void clickRegisterButton() {
-       try {
-         //  Задержка 15 секунд
-         Thread.sleep(10000);
-       } catch (InterruptedException e) {
-           Thread.currentThread().interrupt();
-       }
-       Actions actions = new Actions(driver);
-       actions.moveToElement(registerButton).click().build().perform();
-   }
+    public void clickRegisterButton() {
+        try {
+            // Задержка 10 секунд
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+
+        Actions actions = new Actions(driver);
+
+        try {
+            // Первая попытка клика
+            actions.moveToElement(registerButton).click().build().perform();
+        } catch (StaleElementReferenceException e) {
+            // Повторный поиск элемента и повтор клика
+            registerButton = driver.findElement(By.xpath("//button[text()='Зарегистрироваться']")); // или другой локатор
+            actions.moveToElement(registerButton).click().build().perform();
+        }
+    }
+
 
     public boolean isPasswordErrorDisplayed() {
         return passwordErrorMessage.isDisplayed();

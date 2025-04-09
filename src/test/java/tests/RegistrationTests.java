@@ -26,14 +26,14 @@ public class RegistrationTests {
     private RegistrationPage registrationPage;
 
     private static final String BASE_URI = "https://stellarburgers.nomoreparties.site/api";
-    private static final String testUser = "tester0804259";
-    private static final String testEmail = "tester0804259@mail.com";
+    private static final String testUser = "tester0904251";
+    private static final String testEmail = "tester0904251@mail.com";
     private static final String testPassword = "password123";
     private static String accessToken;
 
     @Before
     public void setUp() {
-         //YandexDriver yandexDriver = new YandexDriver();
+        //YandexDriver yandexDriver = new YandexDriver();
        // driver = yandexDriver.getDriver();
         ChromeDriver chromeDriverSetup = new ChromeDriver();
         driver = chromeDriverSetup.getDriver();
@@ -41,7 +41,16 @@ public class RegistrationTests {
         driver.get("https://stellarburgers.nomoreparties.site");
         registrationPage = new RegistrationPage(driver);
         mainPage = new MainPage(driver);
+        // Попробуем получить токен, если пользователь уже зарегистрирован
+        fetchAccessToken();
+
+        // Если токен получен — удалим пользователя
+        if (accessToken != null) {
+            deleteTestUser(accessToken);
+            accessToken = null; // сбросим, чтобы не мешал в тесте
+        }
     }
+
 
     @Test
     @Description("Успешная регистрация с валидными данными")
